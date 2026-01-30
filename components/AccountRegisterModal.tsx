@@ -62,28 +62,39 @@ const AccountRegisterModal: React.FC<AccountRegisterModalProps> = ({ isOpen, onC
 
   // Implement mapping suggestions based on Entry Context
   useEffect(() => {
-    if (isOpen && entryContext) {
-      const isPurchaseInEntry = entryContext.some(l => l.accountName.toLowerCase().includes('purchase'));
-      const isSalesInEntry = entryContext.some(l => l.accountName.toLowerCase().includes('sales'));
-      const isReturn = accountName.toLowerCase().includes('return');
+    if (isOpen && accountName) {
+      const lowerName = accountName.toLowerCase();
+      const isReturn = lowerName.includes('return');
+      
+      let suggestedType: AccountType = 'ASSET';
+      let suggestedClass: AccountClassification = 'CURRENT_ASSET';
 
-      if (isPurchaseInEntry) {
-        if (isReturn) {
-          setSelectedType('REVENUE');
-          setClassification('DIRECT_REVENUE');
-        } else {
-          setSelectedType('LIABILITY');
-          setClassification('SUNDRY_CREDITOR');
-        }
-      } else if (isSalesInEntry) {
-        if (isReturn) {
-          setSelectedType('EXPENSE');
-          setClassification('DIRECT_EXPENSE');
-        } else {
-          setSelectedType('ASSET');
-          setClassification('SUNDRY_DEBTOR');
+      if (entryContext) {
+        const hasPurchaseLine = entryContext.some(l => l.accountName.toLowerCase().includes('purchase'));
+        const hasSalesLine = entryContext.some(l => l.accountName.toLowerCase().includes('sales'));
+
+        if (hasPurchaseLine) {
+          if (isReturn) {
+            suggestedType = 'REVENUE';
+            suggestedClass = 'DIRECT_REVENUE';
+          } else {
+            suggestedType = 'LIABILITY';
+            suggestedClass = 'SUNDRY_CREDITOR';
+          }
+        } else if (hasSalesLine) {
+          if (isReturn) {
+            suggestedType = 'EXPENSE';
+            suggestedClass = 'DIRECT_EXPENSE';
+          } else {
+            suggestedType = 'ASSET';
+            suggestedClass = 'SUNDRY_DEBTOR';
+          }
         }
       }
+      
+      // Apply defaults
+      setSelectedType(suggestedType);
+      setClassification(suggestedClass);
     }
   }, [isOpen, entryContext, accountName]);
 
