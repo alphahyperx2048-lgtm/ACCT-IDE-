@@ -1,4 +1,3 @@
-
 import React, { useMemo, useState } from 'react';
 import { Package, TrendingUp, Layers, Boxes, Search, Activity, Calendar, History, ArrowRight, Link as LinkIcon } from 'lucide-react';
 import { useAccounting } from '../context/AccountingContext';
@@ -201,7 +200,7 @@ const InventoryView: React.FC = () => {
                 </div>
               );
             })}
-          </div>
+          </motion.div>
         )}
       </AnimatePresence>
     </div>
